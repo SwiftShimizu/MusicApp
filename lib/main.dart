@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  // 環境変数を読み込む
+  await dotenv.load(fileName: '.env');
+  print(dotenv.env['SPOTIFY_CLIENT_ID']);
   runApp(const MyApp());
 }
 
