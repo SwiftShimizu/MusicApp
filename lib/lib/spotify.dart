@@ -26,7 +26,10 @@ class SpotifyClient {
     return spotifyClient;
   }
 
-  void test() {
-    print(token);
+  dynamic getPopluarSongs() async {
+    Response response = await dio.get(
+        "https://api.spotify.com/v1/playlists/5SLPaOxQyJ8Ne9zpmTOvSe/tracks",
+        options: Options(headers: {"Authorization": "Bearer $token"}));
+    return response.data["items"].map((e) => e["track"]).toList();
   }
 }
