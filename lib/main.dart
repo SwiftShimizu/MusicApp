@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:music_clone/lib/spotify.dart';
 
 void main() async {
   // 環境変数を読み込む
   await dotenv.load(fileName: '.env');
-  print(dotenv.env['SPOTIFY_CLIENT_ID']);
+  await setupSpotify();
   runApp(const MyApp());
+  spotify.test();
 }
 
 class MyApp extends StatelessWidget {
