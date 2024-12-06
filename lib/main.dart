@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
@@ -26,8 +27,11 @@ class MusicApp extends StatefulWidget {
 }
 
 class _MusicAppState extends State<MusicApp> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
   List<Song> _popularSongs = [];
   bool _isInitialized = false;
+  Song? _selectedSong;
+  bool _isPlaying = false;
 
   @override
   void initState() {
@@ -41,7 +45,21 @@ class _MusicAppState extends State<MusicApp> {
       _popularSongs = songs;
       _isInitialized = true;
     });
-    print(songs);
+  }
+
+  void _play() {
+    _audioPlayer.play(UrlSource(_selectedSong!.previewUrl!));
+    setState(() {
+      _isPlaying = true;
+    });
+  }
+
+  void _handleSongSelected(Song song) {
+    debugPrint("you selected ${song.name}");
+    setState(() {
+      _selectedSong = song;
+    });
+    _play();
   }
 
   @override
@@ -81,7 +99,8 @@ class _MusicAppState extends State<MusicApp> {
                                     (int index) => auto,
                                   ),
                                   children: _popularSongs
-                                      .map((e) => SongCard(song: e))
+                                      .map((e) => SongCard(
+                                          song: e, onTap: _handleSongSelected))
                                       .toList(),
                                 ),
                               ),

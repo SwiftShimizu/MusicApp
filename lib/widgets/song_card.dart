@@ -4,14 +4,17 @@ import '../modules/songs/song.dart';
 
 class SongCard extends StatelessWidget {
   final Song song;
+  final Function(Song) onTap;
   const SongCard({
     super.key,
     required this.song,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => onTap(song),
       child: Card(
         color: const Color(0xFF2C2C2E),
         child: Column(
