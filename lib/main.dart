@@ -33,6 +33,8 @@ class _MusicAppState extends State<MusicApp> {
   bool _isInitialized = false;
   Song? _selectedSong;
   bool _isPlaying = false;
+  String? _searchKeyword;
+  List<Song>? _searchResults;
 
   @override
   void initState() {
@@ -74,8 +76,24 @@ class _MusicAppState extends State<MusicApp> {
     _play();
   }
 
+  void _handleTextFlieldChanged(String value) {
+    debugPrint("searching for $value");
+    setState(() {
+      _searchKeyword = value;
+    });
+  }
+
+  void _searchSongs() async {
+    debugPrint("searching for $_searchKeyword");
+    final songs = await spotify.searchSongs(_searchKeyword!);
+    setState(() {
+      _searchResults = songs;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final songs = _searchResults ?? _popularSongs;
     return Scaffold(
       appBar: const CustomAppBar(),
       body: SafeArea(
@@ -86,7 +104,9 @@ class _MusicAppState extends State<MusicApp> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CustomSearchBar(),
+                  CustomSearchBar(
+                      onSearch: _handleTextFlieldChanged,
+                      onEditingComplete: _searchSongs),
                   const SizedBox(height: 16),
                   const Text(
                     'Songs',
@@ -107,10 +127,10 @@ class _MusicAppState extends State<MusicApp> {
                                   columnSizes: [1.fr, 1.fr],
                                   rowSizes:
                                       List<IntrinsicContentTrackSize>.generate(
-                                    (_popularSongs.length / 2).round(),
+                                    (songs.length / 2).round(),
                                     (int index) => auto,
                                   ),
-                                  children: _popularSongs
+                                  children: songs
                                       .map((e) => SongCard(
                                           song: e, onTap: _handleSongSelected))
                                       .toList(),
