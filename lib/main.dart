@@ -8,6 +8,7 @@ import 'package:music_clone/widgets/search_bar.dart';
 import 'package:music_clone/widgets/song_card.dart';
 
 import 'modules/songs/song.dart';
+import 'widgets/player.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -54,8 +55,19 @@ class _MusicAppState extends State<MusicApp> {
     });
   }
 
+  void _stop() {
+    _audioPlayer.stop();
+    setState(() {
+      _isPlaying = false;
+    });
+  }
+
   void _handleSongSelected(Song song) {
     debugPrint("you selected ${song.name}");
+    if (_selectedSong == null) {
+      _stop();
+      return;
+    }
     setState(() {
       _selectedSong = song;
     });
@@ -109,6 +121,15 @@ class _MusicAppState extends State<MusicApp> {
                   ),
                 ],
               ),
+              if (_selectedSong != null)
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: IntrinsicHeight(
+                      child: Player(
+                          song: _selectedSong!,
+                          isPlaying: _isPlaying,
+                          onButtonPressed: () => _isPlaying ? _stop : _play),
+                    ))
             ],
           ),
         ),
